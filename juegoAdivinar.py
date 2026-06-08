@@ -1,70 +1,34 @@
 import random
 import msvcrt
-import sys
 
 # ============================================================================
-# FUNCIONES DE UTILIDAD (Responsabilidad única: operaciones básicas)
+# 1. FUNCIONES DE UTILIDAD (Operaciones básicas y puras)
 # ============================================================================
 
 def generar_aleatorio(limite_inferior, limite_superior):
     """
     Genera un número aleatorio dentro del rango especificado.
-    
-    Principio aplicado: Single Responsibility (SRP)
-    - Esta función solo se encarga de generar el número, nada más.
-    - Es reutilizable en cualquier contexto que necesite aleatoriedad.
-    
-    Args:
-        limite_inferior: Valor mínimo del rango (inclusive)
-        limite_superior: Valor máximo del rango (inclusive)
-    
-    Returns:
-        int: Número aleatorio generado
+    Principio: Single Responsibility (SRP).
     """
-    numero_generado = random.randint(limite_inferior, limite_superior)
-    return numero_generado
+    return random.randint(limite_inferior, limite_superior)
 
 
 def verificar_en_intervalo(limite_inferior, limite_superior, numero):
     """
     Valida si un número está dentro del rango permitido.
-    
-    Principio aplicado: Open/Closed (OCP)
-    - La función está cerrada a modificación pero abierta a extensión
-    - Puede usarse con cualquier rango sin cambiar su código interno.
-    
-    Args:
-        limite_inferior: Valor mínimo del rango
-        limite_superior: Valor máximo del rango
-        numero: Número a verificar
-    
-    Returns:
-        bool: True si está en el rango, False en caso contrario
+    Principio: Open/Closed (OCP).
     """
-    if limite_inferior <= numero <= limite_superior:
-        return True
-    else:
-        return False
+    return limite_inferior <= numero <= limite_superior
 
 
 # ============================================================================
-# FUNCIONES DE CONFIGURACIÓN (Responsabilidad: setup del juego)
+# 2. FUNCIONES DE CONFIGURACIÓN (Setup del juego)
 # ============================================================================
 
 def solicitar_limite(mensaje, minimo_permitido=1):
     """
-    Solicita al usuario un valor numérico con validación.
-    
-    Principio aplicado: DRY (Don't Repeat Yourself)
-    - Evita duplicar código de validación de entrada.
-    - Se reutiliza para pedir ambos límites.
-    
-    Args:
-        mensaje: Texto a mostrar al usuario
-        minimo_permitido: Valor mínimo aceptable (default: 1)
-    
-    Returns:
-        int: Valor numérico válido ingresado por el usuario
+    Solicita un valor numérico validando la entrada.
+    Principio: DRY (Don't Repeat Yourself).
     """
     while True:
         try:
@@ -80,106 +44,63 @@ def solicitar_limite(mensaje, minimo_permitido=1):
 def configurar_juego():
     """
     Permite al usuario definir los parámetros del juego.
-    
-    Principio aplicado: Single Responsibility (SRP)
-    - Esta función solo se encarga de la configuración, no de ejecutar el juego.
-    - Separa la lógica de setup de la lógica de ejecución.
-    
-    Returns:
-        tuple: (limite_inferior, limite_superior, max_intentos)
+    Principio: SRP (Separa la configuración de la ejecución).
     """
     print("\n" + "="*60)
     print("🎮 CONFIGURACIÓN DEL JUEGO")
     print("="*60)
     
-    # Solicitar límites con validación
     limite_inferior = solicitar_limite(" Ingresa el límite INFERIOR del rango: ")
     
-    # El límite superior debe ser mayor al inferior
     while True:
-        limite_superior = solicitar_limite("📍 Ingresa el límite SUPERIOR del rango: ")
+        limite_superior = solicitar_limite(" Ingresa el límite SUPERIOR del rango: ")
         if limite_superior > limite_inferior:
             break
-        print(f"⚠️  El límite superior debe ser mayor que {limite_inferior}. Intenta de nuevo.\n")
+        print(f"⚠️  El límite superior debe ser mayor que {limite_inferior}.\n")
     
-    # Solicitar cantidad de intentos
     max_intentos = solicitar_limite("🎯 ¿Cuántos intentos deseas tener? (mínimo 1): ", minimo_permitido=1)
     
     return limite_inferior, limite_superior, max_intentos
 
 
 # ============================================================================
-# FUNCIONES DE INTERFAZ (Responsabilidad: mostrar información al usuario)
+# 3. FUNCIONES DE INTERFAZ (Presentación visual)
 # ============================================================================
 
 def mostrar_bienvenida(limite_inferior, limite_superior, max_intentos):
-    """
-    Muestra el mensaje de bienvenida e instrucciones del juego.
-    
-    Principio aplicado: Separation of Concerns
-    - La presentación visual está separada de la lógica del juego.
-    - Fácil de modificar sin afectar la mecánica del juego.
-    """
+    """Muestra el mensaje de bienvenida e instrucciones."""
     print("\n" + "="*60)
     print("🎲 ¡BIENVENIDO AL JUEGO DE ADIVINANZA! 🎲")
     print("="*60)
     print(f"\n INSTRUCCIONES:")
     print(f"   • He pensado un número entre {limite_inferior} y {limite_superior}")
     print(f"   • Tienes {max_intentos} intentos para adivinarlo")
-    print(f"   • Te daré pistas si tu número es muy alto o muy bajo")
-    print(f"   • Presiona ESC en cualquier momento para salir del juego")
+    print(f"   • Presiona ESC antes de ingresar un número para salir")
     print("="*60 + "\n")
 
 
 def mostrar_estado_intentos(intentos_restantes, max_intentos):
-    """
-    Muestra el progreso actual de intentos.
-    
-    Args:
-        intentos_restantes: Intentos que quedan disponibles
-        max_intentos: Total de intentos permitidos
-    """
+    """Muestra el progreso visual de los intentos."""
     intentos_usados = max_intentos - intentos_restantes
-    barra_progreso = "█" * intentos_usados + "░" * intentos_restantes
-    print(f"\n📊 Progreso: [{barra_progreso}] {intentos_restantes} intento(s) restante(s)")
+    barra = "█" * intentos_usados + "░" * intentos_restantes
+    print(f"\n📊 Progreso: [{barra}] {intentos_restantes} intento(s) restante(s)")
 
 
 def solicitar_numero_usuario(limite_inferior, limite_superior):
-    """
-    Solicita y valida la entrada del usuario.
-    
-    Principio aplicado: Single Responsibility (SRP)
-    - Solo se encarga de obtener un número válido del usuario.
-    - No evalúa si es correcto, solo valida el formato y rango.
-    
-    Returns:
-        int: Número válido ingresado por el usuario
-    """
+    """Solicita y valida la entrada numérica del usuario."""
     while True:
         try:
             numero = int(input("\n🔢 Ingresa tu número: "))
-            
-            # Validar que esté en el rango permitido
             if verificar_en_intervalo(limite_inferior, limite_superior, numero):
                 return numero
             else:
                 print(f"⚠️  El número debe estar entre {limite_inferior} y {limite_superior}")
-                
         except ValueError:
-            print("⚠️  Entrada inválida. Por favor, ingresa un número entero.")
+            print("⚠️  Entrada inválida. Ingresa solo números enteros.")
 
 
 def evaluar_intento(numero_usuario, numero_secreto):
-    """
-    Compara el número del usuario con el número secreto y da pistas.
-    
-    Principio aplicado: Single Responsibility (SRP)
-    - Solo evalúa, no modifica estado ni controla flujo.
-    - Retorna información para que el llamador decida qué hacer.
-    
-    Returns:
-        str: 'correcto', 'mayor', o 'menor'
-    """
+    """Compara el número y retorna el estado de la jugada."""
     if numero_usuario == numero_secreto:
         return 'correcto'
     elif numero_usuario < numero_secreto:
@@ -190,146 +111,104 @@ def evaluar_intento(numero_usuario, numero_secreto):
         return 'mayor'
 
 
-def mostrar_resultado_final(gano, numero_secreto, intentos_usados, max_intentos):
-    """
-    Muestra el mensaje de victoria o derrota.
-    
-    Args:
-        gano: Boolean indicando si el usuario ganó
-        numero_secreto: El número que debía adivinar
-        intentos_usados: Cantidad de intentos utilizados
-        max_intentos: Máximo de intentos permitidos
-    """
+def mostrar_resultado_final(gano, numero_secreto, intentos_usados):
+    """Muestra el mensaje de victoria o derrota."""
     print("\n" + "="*60)
     if gano:
         print("🎉 ¡FELICIDADES! ¡HAS GANADO! 🎉")
         print(f"   Adivinaste el número {numero_secreto} en {intentos_usados} intento(s)")
-        
-        # Mensaje especial si lo logró en el primer intento
-        if intentos_usados == 1:
-            print("   ¡Impresionante! ¡Lo lograste en el primer intento! ")
     else:
         print("💀 ¡FIN DEL JUEGO! 💀")
-        print(f"   Te quedaste sin intentos.")
-        print(f"   El número secreto era: {numero_secreto}")
+        print(f"   Te quedaste sin intentos. El número era: {numero_secreto}")
     print("="*60 + "\n")
 
 
 # ============================================================================
-# FUNCIONES DE CONTROL DE FLUJO (Responsabilidad: gestionar el juego)
+# 4. FUNCIONES DE CONTROL DE FLUJO (Lógica del juego)
 # ============================================================================
 
 def detectar_tecla_esc():
     """
-    Verifica si se presionó la tecla ESC.
-    
-    Returns:
-        bool: True si se presionó ESC, False en caso contrario
+    Verifica de forma no bloqueante si se presionó ESC.
+    Nota: Se ejecuta entre turnos para no interrumpir el input() nativo.
     """
     if msvcrt.kbhit():
         tecla = msvcrt.getch()
-        # ESC tiene código ASCII 27
-        if ord(tecla) == 27:
+        if ord(tecla) == 27: # 27 es el código ASCII de ESC
             return True
     return False
 
 
 def ejecutar_ronda(limite_inferior, limite_superior, max_intentos):
     """
-    Ejecuta una partida completa del juego.
-    
-    Principio aplicado: Single Responsibility (SRP)
-    - Esta función maneja toda la lógica de una ronda.
-    - El llamador no necesita conocer los detalles internos.
-    
-    Args:
-        limite_inferior: Valor mínimo del rango
-        limite_superior: Valor máximo del rango
-        max_intentos: Número máximo de intentos permitidos
-    
-    Returns:
-        bool: True si el usuario quiere jugar otra ronda, False si quiere salir
+    Ejecuta una partida completa.
+    Returns: True si la ronda terminó normal, False si se presionó ESC.
     """
-    # Generar el número secreto para esta ronda
     numero_secreto = generar_aleatorio(limite_inferior, limite_superior)
     intentos_restantes = max_intentos
     
-    # Mostrar bienvenida con los parámetros actuales
     mostrar_bienvenida(limite_inferior, limite_superior, max_intentos)
     
-    # Bucle principal de la ronda
     while intentos_restantes > 0:
-        # Verificar si el usuario quiere salir
+        # Verificar si el usuario quiere salir antes de pedir el número
         if detectar_tecla_esc():
             print("\n\n👋 Saliendo del juego... ¡Hasta pronto!")
             return False
         
-        # Mostrar estado actual
         mostrar_estado_intentos(intentos_restantes, max_intentos)
-        
-        # Solicitar número al usuario
         numero_usuario = solicitar_numero_usuario(limite_inferior, limite_superior)
-        
-        # Evaluar el intento
         resultado = evaluar_intento(numero_usuario, numero_secreto)
         
-        # Verificar si ganó
         if resultado == 'correcto':
             intentos_usados = max_intentos - intentos_restantes + 1
-            mostrar_resultado_final(True, numero_secreto, intentos_usados, max_intentos)
-            return True  # Gano, preguntar si quiere continuar
-        
-        # Restar un intento
+            mostrar_resultado_final(True, numero_secreto, intentos_usados)
+            return True # Ronda terminada exitosamente
+            
         intentos_restantes -= 1
     
-    # Si llega aquí, se agotaron los intentos
-    mostrar_resultado_final(False, numero_secreto, max_intentos, max_intentos)
-    return True  # Perdió, pero puede jugar otra ronda
+    # Si el bucle termina, se agotaron los intentos
+    mostrar_resultado_final(False, numero_secreto, max_intentos)
+    return True # Ronda terminada por derrota, pero no por ESC
 
 
 def preguntar_continuar():
-    """
-    Pregunta al usuario si desea jugar otra ronda.
-    
-    Returns:
-        bool: True si quiere continuar, False si quiere salir
-    """
+    """Pregunta al usuario si desea jugar otra ronda."""
     print("\n" + "-"*60)
     respuesta = input("¿Deseas jugar otra ronda? (s/n): ").strip().lower()
     print("-"*60)
-    
     return respuesta == 's'
 
 
 # ============================================================================
-# PROGRAMA PRINCIPAL (Orquestación del flujo del juego)
+# 5. EJECUCIÓN SECUENCIAL DEL PROGRAMA (Ámbito Global)
 # ============================================================================
 
 print("\n" + "🎮" * 30)
 print("   JUEGO DE ADIVINANZA - PYTHON")
 print("🎮" * 30)
 
-# Configurar el juego (obtener parámetros del usuario)
+# Paso 1: Configurar los parámetros iniciales
 limite_inferior, limite_superior, max_intentos = configurar_juego()
 
-# Bucle principal del juego (se repite hasta que el usuario decida salir)
+# Paso 2: Bucle principal que mantiene el juego activo
 juego_activo = True
 
 while juego_activo:
-    # Ejecutar una ronda del juego
-   #COMPLETAR
+    # Ejecutar la ronda y guardar su estado de salida
+   # continuar_juego=      Completar la implementacion llamando a la funcion adecuada. 
     
-    # Si el usuario presionó ESC durante la ronda, salir inmediatamente
-    if not ronda_completada:
-       #COMPLETAR
+    # Si la función retornó False, significa que se presionó ESC
+    if not continuar_juego:
+        #Completar ruptura de la ejecucion.
     
-    # Preguntar si desea jugar otra ronda
+    # Si la ronda terminó normal, preguntar si quiere repetir
     if not preguntar_continuar():
         print("\n👋 ¡Gracias por jugar! ¡Hasta la próxima!")
         juego_activo = False
     else:
-        # Opcional: permitir reconfigurar el juego
+        # Dar la opción de reconfigurar los límites o intentos
         reconfigurar = input("\n¿Deseas cambiar la configuración del juego? (s/n): ").strip().lower()
-        # COMPLETAR
+        if reconfigurar == 's':
+            limite_inferior, limite_superior, max_intentos = # llamar a la funcion adecuada
 
 print("\n✅ Programa finalizado correctamente.\n")
