@@ -71,3 +71,4 @@ while ejecutando:
 
 pygame.quit()
 sys.exit()
+#Paso 4: mostrar un texto indicando el CLIC

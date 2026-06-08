@@ -9,15 +9,14 @@ pygame.init()
 
 ANCHO_VENTANA = 800
 ALTO_VENTANA = 600
-pantalla = pygame.display.set_mode((ANCHO_VENTANA, ALTO_VENTANA))
-pygame.display.set_caption("Paso 3: Cuadrado Amarillo Centrado")
-
 # --- NUEVA PALETA DE COLORES (RGB) ---
 COLOR_GRIS = (100, 110, 120)       # Fondo Gris Medio
 COLOR_AMARILLO = (255, 215, 0)     # Cuadrado Amarillo (Gold)
-
 # --- CONFIGURACIÓN GEOMÉTRICA DEL CUADRADO ---
 TAMANIO_CUADRADO = 150  # Lado del cuadrado en píxeles
+
+pantalla = pygame.display.set_mode((ANCHO_VENTANA, ALTO_VENTANA))
+pygame.display.set_caption("Paso 3: Cuadrado Amarillo Centrado")
 
 # 1. Creamos el objeto rectangular con dimensiones (X, Y, Ancho, Alto)
 # Lo inicializamos temporalmente en el origen (0, 0)
@@ -46,3 +45,5 @@ while ejecutando:
 
 pygame.quit()
 sys.exit()
+
+#Paso 3 : Pidas las coordenadas del cuadrado antes de dibujarse.

@@ -47,3 +47,5 @@ while ejecutando:
 
 pygame.quit()
 sys.exit()
+
+#Usar un INPUT para añadir tu nombre al texto mostrado. HOLA {NOMBRE}!!!
