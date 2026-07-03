@@ -26,7 +26,7 @@ ANCHO_TILE = 80
 NOMBRE_TILE = "assets/sprites/tiles/2.png"
 
 # Mapa de bloques: 1 = Hay bloque de imagen, 0 = Vacío (Agujero)
-MAPA_PISO = [1, 1, 1, 1, 0, 0, 1, 1, 1, 1]
+MAPA_PISO = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 
 # --- FUENTES ---
 fuente_hud = pygame.font.SysFont("monospace", 18, bold=True)
